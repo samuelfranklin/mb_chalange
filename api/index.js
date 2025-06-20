@@ -16,25 +16,26 @@ const API_RESULTS = {
 
 // #region Api Routes
 
-app.post('/users', async (req, res) => {
+app.route('/users')
+    .post( async (req, res) => {
     try {
         const newUser = req.body;
+
+        if (!newUser.email || !newUser.username || !newUser.password) return res.status(400).send(API_RESULTS.error(['MISSING_FIELDS']));
+        if(newUser.password.length < 8) return res.status(400).send(API_RESULTS.error(['PASSWORD_TOO_SHORT']));
+
         const existingEmail = await db.findOne({ email: newUser.email });
         const existingUsername = await db.findOne({ username: newUser.username });
 
         if(existingEmail) return res.result(400).send(API_RESULTS.error(['EMAIL_EXISTS']));
         if(existingUsername) return res.status(400).send(API_RESULTS.error(['USERNAME_EXISTS']));
-        if (!newUser.email || !newUser.username || !newUser.password) return res.status(400).send(API_RESULTS.error(['MISSING_FIELDS']));
-        if(newUser.password.length < 8) return res.status(400).send(API_RESULTS.error(['PASSWORD_TOO_SHORT']));
 
         const user = await db.insert(newUser);
         res.status(201).send(API_RESULTS.success(user));
     } catch (error) {
-        return res.status(500).send(API_RESULTS.error([{ _id: 'SERVER_ERROR', message: error.message, error }]));
-    }
-});
-
-app.get('/users', async (req, res) => {
+        return res.status(500).send(API_RESULTS.error([{ _id: 'SERVER_ERROR', message: error.message }]));
+    }})
+    .get(async (req, res) => {
     try {
         const users = await db.find({});
         res.status(200).send(API_RESULTS.success(users));
