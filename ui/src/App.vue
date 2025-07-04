@@ -1,6 +1,10 @@
 <script setup>
+import { AppLayout } from '@/layout'
+import RegisterForm from '@/views/RegisterForm.vue'
 </script>
 
 <template>
-  teste
+  <AppLayout>
+    <RegisterForm />
+  </AppLayout>
 </template>
