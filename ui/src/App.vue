@@ -2,5 +2,5 @@
 </script>
 
 <template>
- <div>Dev test | BM</div>
+  teste
 </template>
