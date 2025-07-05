@@ -1,4 +1,4 @@
-<script setup lang="ts"></script>
+<script setup></script>
 
 <template>
   <footer>&copy; {{ new Date().getFullYear() }} Samuel F. Venturin.</footer>
