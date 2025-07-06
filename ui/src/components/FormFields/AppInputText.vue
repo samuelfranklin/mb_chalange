@@ -6,6 +6,10 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  label: {
+    type: String,
+    required: false,
+  },
   helpText: {
     type: String,
     required: false,
@@ -14,12 +18,17 @@ const props = defineProps({
     type: String,
     required: false,
   },
+  type: {
+    type: String,
+    default: 'text',
+  },
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'input'])
 
 const errorMessage = ref(null)
 
+const hasLabel = computed(() => !!props.label)
 const isRequired = computed(() => props.rules?.includes('required'))
 const hasErrorMessage = computed(() => !!errorMessage.value)
 const hasHelpText = computed(() => !!props.helpText && !hasErrorMessage.value)
@@ -34,10 +43,10 @@ const data = computed({
 
 <template>
   <label :for="id" class="app-input">
-    <span :class="['app-input-label', { required: isRequired }]">Email</span>
-    <input :id v-model="data" type="text" class="app-input-field" />
-    <sub v-if="hasHelpText" class="app-input-help">escreva seu melhor email</sub>
-    <sub v-if="hasErrorMessage" class="app-input-error">deve ser um endereço válido</sub>
+    <span v-if="hasLabel" :class="['app-input-label', { required: isRequired }]">{{ label }}</span>
+    <input :id v-model="data" :type class="app-input-field" @input="$emit('input')" />
+    <sub v-if="hasHelpText" class="app-input-help">{{ helpText }}</sub>
+    <sub v-if="hasErrorMessage" class="app-input-error">{{ errorMessage }}</sub>
   </label>
 </template>
 

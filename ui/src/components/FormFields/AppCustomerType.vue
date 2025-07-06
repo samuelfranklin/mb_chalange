@@ -29,7 +29,7 @@ const selected = computed({
     </label>
     <label class="customer-type-field">
       <input type="radio" value="natural" v-model="selected" />
-      <span>Pessoa Fìsica</span>
+      <span>Pessoa Física</span>
     </label>
   </div>
 </template>
