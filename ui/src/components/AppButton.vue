@@ -1,5 +1,7 @@
 <script setup>
-defineProps({
+import { computed } from 'vue'
+
+const props = defineProps({
   label: {
     type: String,
     default: 'Click click',
@@ -23,25 +25,43 @@ defineProps({
 })
 
 defineEmits(['click'])
+
+const btnAppearance = computed(() => ({
+  'btn-text': props.text,
+  'btn-outlined': props.outlined,
+  'btn-filled': !props.text && !props.outlined,
+}))
 </script>
 
 <template>
-  <button class="btn" @click="$emit('click')">
+  <button :class="['btn', btnAppearance]" @click="$emit('click')">
     {{ label }}
   </button>
 </template>
 
 <style scoped>
 .btn {
+  width: 100%;
   display: inline-block;
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
-  border: none;
+  background-color: var(--color-primary);
+  color: white;
+  font-weight: 400;
+  border: 1px solid transparent;
   font-size: 1rem;
   cursor: pointer;
-  transition:
-    background-color 0.3s,
-    color 0.3s,
-    border-color 0.3s;
+  transition: all 0.3s;
+}
+
+.btn-text {
+  background-color: transparent;
+  color: var(--color-primary);
+}
+
+.btn-outlined {
+  background-color: transparent;
+  color: var(--color-primary);
+  border-color: var(--color-primary);
 }
 </style>
