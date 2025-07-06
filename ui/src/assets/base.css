@@ -4,15 +4,8 @@
   box-sizing: border-box;
 }
 
-h1, h2, h3, h4, h5, h6, p, figure, blockquote, dl, dd, ul, ol {
+body, h1, h2, h3, h4, h5, h6, p, figure, blockquote, dl, dd, ul, ol {
   margin: 0;
-
-}
-
-body {
-  min-height: 100vh;
-  line-height: 1.5;
-  font-family: -apple-system, Montserrat, Inter, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
 }
 
 ul, ol {

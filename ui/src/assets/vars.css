@@ -1,0 +1,28 @@
+:root {
+  --font-title: 'Montserrat', sans-serif;
+  --font-body: 'Poppins', sans-serif;
+
+  --color-primary: #FF9900;
+  --color-primary-darker: #e66e00;
+  --color-error: #dc3545;
+  --color-success: #28a745;
+  --color-help: #17a2b8;
+  --color-warning: #ffc107;
+
+  --background-color: #ececec;
+  --surface-color: #ffffff;
+  --text-color-primary: #212529;
+  --text-color-secondary: #6c757d;
+  --border-color: #dee2e6;
+
+
+  --box-shadow: 0 0.1rem 0.5rem rgba(0, 0, 0, 0.2);
+}
+
+html.dark-theme {
+  --background-color: #121212;
+  --surface-color: #1e1e1e;
+  --text-color-primary: #eaeaea;
+  --text-color-secondary: #a0a0a0;
+  --border-color: #444444;
+}

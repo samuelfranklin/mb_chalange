@@ -1,33 +1,18 @@
-:root {
-  --font-title: 'Montserrat', sans-serif;
-  --font-body: 'Poppins', sans-serif;
-  --primary-color: #FF9900;
-  --primary-color-darker: #e66e00;
-
-  --background-color: #ececec;
-  --surface-color: #ffffff;
-  --text-color-primary: #212529;
-  --text-color-secondary: #6c757d;
-  --border-color: #dee2e6;
-
-  --box-shadow: 0 0.1rem 0.5rem rgba(0, 0, 0, 0.2);
-}
-
-html.dark-theme {
-  --background-color: #121212;
-  --surface-color: #1e1e1e;
-  --text-color-primary: #eaeaea;
-  --text-color-secondary: #a0a0a0;
-  --border-color: #444444;
-}
+@import './base.css';
+@import './vars.css';
 
 html {
-  font-size: 16px;
+  font-size: 12px;
   transition: color 0.2s, background-color 0.2s;
 }
 
 body {
-  margin: 0;
+  min-height: 100vh;
+  line-height: 1.5;
+  font-family: var(--font-body);
+}
+
+body, input, button, textarea, select {
   background-color: var(--background-color);
   color: var(--text-color-primary);
   font-family: var(--font-body);
@@ -37,11 +22,22 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-title);
 }
 
-#app {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+h1 {
+  font-size: 2rem;
 }
+
+p, text {
+  font-size: 1rem;
+}
+
+input:focus {
+  outline: var(--color-primary) solid 0.01rem ;
+}
+
+input.error {
+  outline: var(--color-error) solid 0.01rem;
+}
+
 
 .container {
   width: 100%;
@@ -49,21 +45,6 @@ h1, h2, h3, h4, h5, h6 {
   margin: 0 auto;
 }
 
-h1 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-}
-
-p {
-  font-size: 1rem;
-  margin-bottom: 1rem;
-}
-
-@media (max-width: 767px) {
-  html {
-    font-size: 0.75rem;
-  }
-}
 
 @media (min-width: 768px) {
   h1 {

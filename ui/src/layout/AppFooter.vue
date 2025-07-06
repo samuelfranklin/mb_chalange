@@ -1,4 +1,4 @@
-<script setup lang="ts"></script>
+<script setup></script>
 
 <template>
   <footer>&copy; {{ new Date().getFullYear() }} Samuel F. Venturin.</footer>
@@ -13,5 +13,6 @@ footer {
   padding: 0 1rem;
   font-size: 0.8rem;
   font-family: var(--font-title);
+  background-color: var(--background-color);
 }
 </style>
