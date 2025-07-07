@@ -1,9 +1,13 @@
 const express = require('express');
 const Datastore = require('nedb-promises');
+const path = require('path');
+
 
 const app = express();
+const uiBuildPath = path.join(__dirname, 'view/dist');
 
 app.use(express.json());
+app.use(express.static(uiBuildPath));
 
 const db = Datastore.create({ filename: './database/users.db'});
 
@@ -16,21 +20,35 @@ const API_RESULTS = {
 
 // #region Api Routes
 
-app.route('/users')
+app.route('/registration')
+    .get(async (req, res) =>
+        res.sendFile(path.join(uiBuildPath, 'index.html'))
+    )
     .post( async (req, res) => {
     try {
         const newUser = req.body;
 
-        if (!newUser.email || !newUser.username || !newUser.password) return res.status(400).send(API_RESULTS.error(['MISSING_FIELDS']));
+        if (!newUser.email ||
+            !newUser.name ||
+            !newUser.password ||
+            !newUser.document ||
+            !newUser.registrationDate ||
+            !newUser.phone
+        ) return res.status(400).send(API_RESULTS.error(['MISSING_FIELDS']));
         if(newUser.password.length < 8) return res.status(400).send(API_RESULTS.error(['PASSWORD_TOO_SHORT']));
 
+        const existingErrors = [];
         const existingEmail = await db.findOne({ email: newUser.email });
-        const existingUsername = await db.findOne({ username: newUser.username });
+        const existingDocument = await db.findOne({ document: newUser.document });
+        const existingPhone = await db.findOne({ phone: newUser.phone });
 
-        if(existingEmail) return res.result(400).send(API_RESULTS.error(['EMAIL_EXISTS']));
-        if(existingUsername) return res.status(400).send(API_RESULTS.error(['USERNAME_EXISTS']));
+        if(existingEmail) existingErrors.push('EMAIL_EXISTS');
+        if(existingDocument) existingErrors.push('DOCUMENT_EXISTS');
+        if(existingPhone) existingErrors.push('PHONE_EXISTS');
+        if(existingErrors.length > 0) return res.status(400).send(API_RESULTS.error(existingErrors));
 
         const user = await db.insert(newUser);
+        delete user.password;
         res.status(201).send(API_RESULTS.success(user));
     } catch (error) {
         return res.status(500).send(API_RESULTS.error([{ _id: 'SERVER_ERROR', message: error.message }]));
