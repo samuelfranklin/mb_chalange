@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import AppLogo from '@/components/Icons/AppLogo.vue'
+import DarkTheme from '@/components/Icons/DarkTheme.vue'
+import LightTheme from '@/components/Icons/LightTheme.vue'
+
 import { ref } from 'vue'
 
 const theme = ref(false)
@@ -13,13 +16,8 @@ function toggleTheme() {
   <header class="header">
     <AppLogo class="header-logo" />
     <button type="button" class="header-button-theme" @click="toggleTheme">
-      <img
-        v-if="theme"
-        src="@/assets/images/light.svg"
-        alt="Theme"
-        class="header-button-theme-icon"
-      />
-      <img v-else src="@/assets/images/dark.svg" alt="Theme" class="header-button-theme-icon" />
+      <LightTheme v-if="theme" class="theme-icon theme-icon-light" />
+      <DarkTheme v-else class="theme-icon theme-icon-dark" />
     </button>
   </header>
 </template>
@@ -44,9 +42,15 @@ function toggleTheme() {
   height: 2.5rem;
 }
 
+.theme-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
 .header-button-theme {
   background-color: transparent;
   border: none;
+  cursor: pointer;
 }
 
 .header-button-theme-icon {

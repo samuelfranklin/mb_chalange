@@ -169,78 +169,84 @@ function checkPassword() {
     </header>
 
     <TheCard>
-      <TheInputText
-        v-if="isWelcomeStep || isCheckoutStep"
-        v-model="formFields.email"
-        :label="fieldLabels.email"
-        :error-message="errors['email']"
-        @input="validateField('email')"
-        @blur="handleBlur('email')"
-        @keydown.enter="nextStep"
-      />
-      <TheCustomerType v-if="isWelcomeStep" v-model="formFields.customerType" />
+      <section class="register-form-step-fields">
+        <TheInputText
+          v-if="isWelcomeStep || isCheckoutStep"
+          v-model="formFields.email"
+          :label="fieldLabels.email"
+          :error-message="errors['email']"
+          @input="validateField('email')"
+          @blur="handleBlur('email')"
+          @keydown.enter="nextStep"
+        />
+        <TheCustomerType
+          v-if="isWelcomeStep"
+          v-model="formFields.customerType"
+          class="full-width-field"
+        />
 
-      <TheInputText
-        v-if="isCustomerInfoStep || isCheckoutStep"
-        v-model="formFields.name"
-        :label="fieldLabels.name"
-        :error-message="errors['name']"
-        @input="validateField('name')"
-        @blur="handleBlur('name')"
-        @keydown.enter="nextStep"
-      />
-      <TheInputText
-        v-if="isCustomerInfoStep || isCheckoutStep"
-        v-model="formFields.document"
-        :label="fieldLabels.document"
-        :error-message="errors['document']"
-        @input="validateField('document')"
-        @blur="handleBlur('document')"
-        @keydown.enter="nextStep"
-      />
-      <TheInputText
-        v-if="isCustomerInfoStep || isCheckoutStep"
-        v-model="formFields.registrationDate"
-        :label="fieldLabels.registrationDate"
-        type="date"
-        :error-message="errors['registrationDate']"
-        @input="validateField('registrationDate')"
-        @blur="handleBlur('registrationDate')"
-        @keydown.enter="nextStep"
-      />
-      <TheInputText
-        v-if="isCustomerInfoStep || isCheckoutStep"
-        v-model="formFields.phone"
-        :label="fieldLabels.phone"
-        :error-message="errors['phone']"
-        @input="validateField('phone')"
-        @blur="handleBlur('phone')"
-        @keydown.enter="nextStep"
-      />
+        <TheInputText
+          v-if="isCustomerInfoStep || isCheckoutStep"
+          v-model="formFields.name"
+          :label="fieldLabels.name"
+          :error-message="errors['name']"
+          @input="validateField('name')"
+          @blur="handleBlur('name')"
+          @keydown.enter="nextStep"
+        />
+        <TheInputText
+          v-if="isCustomerInfoStep || isCheckoutStep"
+          v-model="formFields.document"
+          :label="fieldLabels.document"
+          :error-message="errors['document']"
+          @input="validateField('document')"
+          @blur="handleBlur('document')"
+          @keydown.enter="nextStep"
+        />
+        <TheInputText
+          v-if="isCustomerInfoStep || isCheckoutStep"
+          v-model="formFields.registrationDate"
+          :label="fieldLabels.registrationDate"
+          type="date"
+          :error-message="errors['registrationDate']"
+          @input="validateField('registrationDate')"
+          @blur="handleBlur('registrationDate')"
+          @keydown.enter="nextStep"
+        />
+        <TheInputText
+          v-if="isCustomerInfoStep || isCheckoutStep"
+          v-model="formFields.phone"
+          :label="fieldLabels.phone"
+          :error-message="errors['phone']"
+          @input="validateField('phone')"
+          @blur="handleBlur('phone')"
+          @keydown.enter="nextStep"
+        />
 
-      <TheInputText
-        v-if="isCheckoutStep"
-        v-model="passwordCheck"
-        :label="fieldLabels.password"
-        type="password"
-        rules="required"
-        help-text="Confirme sua senha"
-        :error-message="errors['password']"
-        @input="checkPassword"
-        @blur="checkPassword"
-        @keydown.enter="handleSubmit"
-      />
+        <TheInputText
+          v-if="isCheckoutStep"
+          v-model="passwordCheck"
+          :label="fieldLabels.password"
+          type="password"
+          rules="required"
+          help-text="Confirme sua senha"
+          :error-message="errors['password']"
+          @input="checkPassword"
+          @blur="checkPassword"
+          @keydown.enter="handleSubmit"
+        />
 
-      <TheInputText
-        v-if="isPasswordStep"
-        v-model="formFields.password"
-        :label="fieldLabels.password"
-        type="password"
-        :error-message="errors['password']"
-        @input="validateField('password')"
-        @blur="handleBlur('password')"
-        @keydown.enter="nextStep"
-      />
+        <TheInputText
+          v-if="isPasswordStep"
+          v-model="formFields.password"
+          :label="fieldLabels.password"
+          type="password"
+          :error-message="errors['password']"
+          @input="validateField('password')"
+          @blur="handleBlur('password')"
+          @keydown.enter="nextStep"
+        />
+      </section>
 
       <div class="register-form-step-actions">
         <TheButton v-if="currentStep > 0" label="Voltar" outlined @click="previousStep" />
@@ -269,5 +275,22 @@ function checkPassword() {
   flex-direction: row;
   gap: 1rem;
   align-items: center;
+  justify-content: end;
+}
+
+.register-form-step-fields {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .register-form-step-fields {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .full-width-field {
+    grid-column: 1 / -1;
+  }
 }
 </style>

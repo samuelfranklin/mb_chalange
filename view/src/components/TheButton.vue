@@ -60,6 +60,12 @@ const btnAppearance = computed(() => ({
   transition: all 0.3s;
 }
 
+@media (min-width: 768px) {
+  .btn {
+    width: auto;
+  }
+}
+
 .btn-text {
   background-color: transparent;
   color: var(--color-primary);
