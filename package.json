@@ -1,0 +1,19 @@
+{
+  "name": "mb_chalange",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "preview": "npm install --prefix view && npm install && npm run build --prefix view && node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.8.1",
+  "dependencies": {
+    "express": "^5.1.0",
+    "nedb-promises": "^6.2.3",
+    "nodemon": "^3.1.10"
+  }
+}
