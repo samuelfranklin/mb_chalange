@@ -16,8 +16,8 @@ function toggleTheme() {
   <header class="header">
     <AppLogo class="header-logo" />
     <button type="button" class="header-button-theme" @click="toggleTheme">
-      <LightTheme v-if="theme" class="theme-icon theme-icon-light" />
-      <DarkTheme v-else class="theme-icon theme-icon-dark" />
+      <LightTheme v-if="theme" class="theme-icon" />
+      <DarkTheme v-else class="theme-icon" />
     </button>
   </header>
 </template>
@@ -53,7 +53,10 @@ function toggleTheme() {
   cursor: pointer;
 }
 
-.header-button-theme-icon {
-  color: var(--text-color-primary);
+@media (min-width: 768px) {
+  .theme-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
 }
 </style>

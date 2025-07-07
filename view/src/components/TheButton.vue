@@ -53,7 +53,7 @@ const btnAppearance = computed(() => ({
   border-radius: 0.5rem;
   background-color: var(--color-primary);
   color: white;
-  font-weight: 400;
+  font-weight: 600;
   border: 1px solid transparent;
   font-size: 1rem;
   cursor: pointer;
