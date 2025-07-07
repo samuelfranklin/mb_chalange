@@ -1,4 +1,8 @@
+import { useDocument } from './useDocument'
+
 export const useValidator = () => {
+  const { cpf, cnpj } = useDocument()
+
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     return emailRegex.test(email) || 'Email inválido'
@@ -35,10 +39,14 @@ export const useValidator = () => {
     return true
   }
 
+  const validateCPF = (document) => cpf(document).isValid() || 'CPF inválido'
+  const validateCNPJ = (document) => cnpj(document).isValid() || 'CNPJ inválido'
   return {
     validateEmail,
     validateRequired,
     validatePassword,
     validateDate,
+    validateCPF,
+    validateCNPJ,
   }
 }

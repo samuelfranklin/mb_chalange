@@ -75,4 +75,24 @@ describe('useValidator', () => {
       expect(validator.validateDate('invalid_date')).toBe('Data inválida')
     })
   })
+
+  describe('validateCPF', () => {
+    it('should return an error message for an invalid CPF', () => {
+      expect(validator.validateCPF('12345678900')).toBe('CPF inválido')
+    })
+
+    it('should return true for a valid CPF', () => {
+      expect(validator.validateCPF('65318842070')).toBeTruthy()
+    })
+  })
+
+  describe('validateCNPJ', () => {
+    it('should return an error message for an invalid CNPJ', () => {
+      expect(validator.validateCNPJ('12345678000100')).toBe('CNPJ inválido')
+    })
+
+    it('should return true for a valid CNPJ', () => {
+      expect(validator.validateCNPJ('57155700000172')).toBeTruthy()
+    })
+  })
 })
