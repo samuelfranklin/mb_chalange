@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 
 const props = defineProps({
   modelValue: {
@@ -22,16 +22,19 @@ const props = defineProps({
     type: String,
     default: 'text',
   },
+  errorMessage: {
+    type: String,
+    required: false,
+    default: null,
+  },
 })
 
-const emit = defineEmits(['update:modelValue', 'input'])
-
-const errorMessage = ref(null)
+const emit = defineEmits(['update:modelValue', 'input', 'blur'])
 
 const hasLabel = computed(() => !!props.label)
 const isRequired = computed(() => props.rules?.includes('required'))
-const hasErrorMessage = computed(() => !!errorMessage.value)
-const hasHelpText = computed(() => !!props.helpText && !hasErrorMessage.value)
+const isNotValid = computed(() => !!props.errorMessage)
+const hasHelpText = computed(() => !!props.helpText && !props.errorMessage)
 const id = computed(() => `app-input-${Math.random().toString(36).substring(2, 15)}`)
 const data = computed({
   get: () => props.modelValue,
@@ -44,9 +47,17 @@ const data = computed({
 <template>
   <label :for="id" class="app-input">
     <span v-if="hasLabel" :class="['app-input-label', { required: isRequired }]">{{ label }}</span>
-    <input :id v-model="data" :type class="app-input-field" @input="$emit('input')" />
+    <input
+      :id
+      v-model="data"
+      :type
+      class="app-input-field"
+      :class="isNotValid ? 'invalid' : ''"
+      @input="$emit('input')"
+      @blur="$emit('blur')"
+    />
     <sub v-if="hasHelpText" class="app-input-help">{{ helpText }}</sub>
-    <sub v-if="hasErrorMessage" class="app-input-error">{{ errorMessage }}</sub>
+    <sub v-if="isNotValid" class="app-input-error-message">{{ errorMessage }}</sub>
   </label>
 </template>
 
@@ -73,11 +84,14 @@ const data = computed({
   font-family: var(--font-body);
 }
 
+.app-input-field.invalid {
+  border-color: var(--color-error);
+}
 .app-input-help {
   color: var(--color-help);
 }
 
-.app-input-error {
+.app-input-error-message {
   color: var(--color-error);
 }
 </style>

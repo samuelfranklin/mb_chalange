@@ -1,7 +1,8 @@
 <script setup>
 import { AppButton, AppCard } from '@/components'
 import { computed, reactive, ref } from 'vue'
-import { AppCustomerType, AppInputText } from '@/components/FormFields/index.js'
+import { AppCustomerType, AppInputText } from '@/components/FormFields'
+import { useFormValidator } from '@/composables/useFormValidator'
 
 const currentStep = ref(0)
 const passwordCheck = ref(null)
@@ -16,18 +17,28 @@ const formFields = reactive({
 })
 
 const isLegal = computed(() => formFields.customerType === 'legal')
+const validationSchema = computed(() => ({
+  email: 'required|email',
+  name: 'required',
+  document: isLegal.value ? 'required|cnpj' : 'required|cpf',
+  registrationDate: 'required|date',
+  phone: 'required|phone',
+  password: 'required|password',
+}))
+
+const { errors, validateField } = useFormValidator(formFields, validationSchema)
+
 const isWelcomeStep = computed(() => currentStep.value === 0)
 const isCustomerInfoStep = computed(() => currentStep.value === 1)
 const isPasswordStep = computed(() => currentStep.value === 2)
 const isCheckoutStep = computed(() => currentStep.value === 3)
+const stepLabel = computed(() => `Etapa ${currentStep.value + 1} de ${steps.value.length}`)
 const steps = computed(() => [
   'Seja bem-vindo(a)',
-  formFields.customerType === 'legal' ? 'Pessoa Jurídica' : 'Pessoa Física',
+  isLegal.value ? 'Pessoa Jurídica' : 'Pessoa Física',
   'Senha de acesso',
   'Revise suas informações',
 ])
-const stepLabel = computed(() => `Etapa ${currentStep.value + 1} de ${steps.value.length}`)
-
 const fieldLabels = computed(() => ({
   email: 'Email',
   name: isLegal.value ? 'Razão Social' : 'Nome',
@@ -37,10 +48,33 @@ const fieldLabels = computed(() => ({
   password: 'Senha',
 }))
 
-function nextStep() {
-  if (currentStep.value < steps.value.length - 1) {
-    currentStep.value += 1
+const cantMoveOn = computed(() => {
+  if (isWelcomeStep.value) {
+    return !!errors.email || !formFields.email
   }
+
+  if (isCustomerInfoStep.value) {
+    return (
+      !!errors.name ||
+      !formFields.name ||
+      !!errors.document ||
+      !formFields.document ||
+      !!errors.registrationDate ||
+      !formFields.registrationDate ||
+      !!errors.phone ||
+      !formFields.phone
+    )
+  }
+
+  if (isPasswordStep.value) {
+    return !!errors.password || !formFields.password
+  }
+
+  return Object.values(errors).some((error) => error !== null) || !passwordCheck.value
+})
+
+function nextStep() {
+  currentStep.value += 1
 }
 
 function previousStep() {
@@ -49,8 +83,21 @@ function previousStep() {
   }
 }
 
+function handleBlur(fieldName) {
+  console.log(fieldName, errors[fieldName])
+  validateField(fieldName)
+}
+
 function handleSubmit() {
   console.log('submitting')
+}
+
+function checkPassword() {
+  if (formFields.password !== passwordCheck.value) {
+    errors.password = 'As senhas não conferem'
+  } else {
+    errors.password = null
+  }
 }
 </script>
 
@@ -66,6 +113,10 @@ function handleSubmit() {
         v-if="isWelcomeStep || isCheckoutStep"
         v-model="formFields.email"
         :label="fieldLabels.email"
+        :error-message="errors['email']"
+        @input="validateField('email')"
+        @blur="handleBlur('email')"
+        @keydown.enter="nextStep"
       />
       <AppCustomerType v-if="isWelcomeStep" v-model="formFields.customerType" />
 
@@ -73,39 +124,62 @@ function handleSubmit() {
         v-if="isCustomerInfoStep || isCheckoutStep"
         v-model="formFields.name"
         :label="fieldLabels.name"
+        :error-message="errors['name']"
+        @input="validateField('name')"
+        @blur="handleBlur('name')"
+        @keydown.enter="nextStep"
       />
       <AppInputText
         v-if="isCustomerInfoStep || isCheckoutStep"
         v-model="formFields.document"
         :label="fieldLabels.document"
+        :error-message="errors['document']"
+        @input="validateField('document')"
+        @blur="handleBlur('document')"
+        @keydown.enter="nextStep"
       />
       <AppInputText
         v-if="isCustomerInfoStep || isCheckoutStep"
         v-model="formFields.registrationDate"
         :label="fieldLabels.registrationDate"
         type="date"
+        :error-message="errors['registrationDate']"
+        @input="validateField('registrationDate')"
+        @blur="handleBlur('registrationDate')"
+        @keydown.enter="nextStep"
       />
       <AppInputText
         v-if="isCustomerInfoStep || isCheckoutStep"
         v-model="formFields.phone"
         :label="fieldLabels.phone"
+        :error-message="errors['phone']"
+        @input="validateField('phone')"
+        @blur="handleBlur('phone')"
+        @keydown.enter="nextStep"
       />
 
       <AppInputText
         v-if="isCheckoutStep"
-        v-model="formFields.password"
-        :label="fieldLabels.password"
-        type="password"
-        rules="required"
-        help-text="Confirme sua senha"
-      />
-
-      <AppInputText
-        v-if="isPasswordStep"
         v-model="passwordCheck"
         :label="fieldLabels.password"
         type="password"
         rules="required"
+        help-text="Confirme sua senha"
+        :error-message="errors['password']"
+        @input="checkPassword"
+        @blur="checkPassword"
+        @keydown.enter="handleSubmit"
+      />
+
+      <AppInputText
+        v-if="isPasswordStep"
+        v-model="formFields.password"
+        :label="fieldLabels.password"
+        type="password"
+        :error-message="errors['password']"
+        @input="validateField('password')"
+        @blur="handleBlur('password')"
+        @keydown.enter="nextStep"
       />
 
       <div class="register-form-step-actions">
@@ -113,6 +187,7 @@ function handleSubmit() {
         <AppButton
           :label="isCheckoutStep ? 'Cadastrar' : 'Continuar'"
           @click="() => (isCheckoutStep ? handleSubmit() : nextStep())"
+          :disabled="cantMoveOn"
         />
       </div>
     </AppCard>

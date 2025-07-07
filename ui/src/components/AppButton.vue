@@ -22,6 +22,11 @@ const props = defineProps({
     default: false,
     required: false,
   },
+  disabled: {
+    type: Boolean,
+    default: false,
+    required: false,
+  },
 })
 
 defineEmits(['click'])
@@ -30,11 +35,12 @@ const btnAppearance = computed(() => ({
   'btn-text': props.text,
   'btn-outlined': props.outlined,
   'btn-filled': !props.text && !props.outlined,
+  'btn-disabled': props.disabled,
 }))
 </script>
 
 <template>
-  <button :class="['btn', btnAppearance]" @click="$emit('click')">
+  <button :class="['btn', btnAppearance]" :disabled @click="$emit('click')">
     {{ label }}
   </button>
 </template>
@@ -63,5 +69,10 @@ const btnAppearance = computed(() => ({
   background-color: transparent;
   color: var(--color-primary);
   border-color: var(--color-primary);
+}
+
+.btn-disabled {
+  background-color: var(--color-primary-disabled);
+  cursor: default;
 }
 </style>
