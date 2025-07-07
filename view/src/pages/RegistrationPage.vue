@@ -3,7 +3,10 @@ import { TheButton, TheCard, TheCustomerType, TheInputText } from '@/components'
 import { computed, reactive, ref, toRaw } from 'vue'
 import { useFormValidator } from '@/composables/useFormValidator'
 import { useSha256 } from '@/composables/useSha256'
+import { useDocument } from '@/composables/useDocument'
+import { useToast } from '@/composables/useToast'
 
+const toast = useToast()
 const currentStep = ref(0)
 const passwordCheck = ref(null)
 const formFields = reactive({
@@ -87,9 +90,31 @@ function handleBlur(fieldName) {
   validateField(fieldName)
 }
 
+function resetFormFields() {
+  formFields.email = null
+  formFields.customerType = 'legal'
+  formFields.name = null
+  formFields.document = null
+  formFields.registrationDate = null
+  formFields.phone = null
+  formFields.password = null
+  passwordCheck.value = null
+}
+
+function postSubmitValidation(error) {
+  if (error === 'EMAIL_EXISTS') errors.email = 'Email já cadastrado'
+  else if (error === 'DOCUMENT_EXISTS') errors.document = 'Documento já cadastrado'
+  else if (error === 'PHONE_EXISTS') errors.phone = 'Telefone já cadastrado'
+  else console.error('Erro desconhecido:', error)
+}
+
 async function handleSubmit() {
+  const { cpf, cnpj } = useDocument()
   const payload = { ...toRaw(formFields) }
   payload.password = await useSha256()(payload.password)
+  payload.document = isLegal.value
+    ? cnpj(payload.document).cleanDocumentNumber
+    : cpf(payload.document).cleanDocumentNumber
 
   await fetch('/registration', {
     method: 'POST',
@@ -99,13 +124,28 @@ async function handleSubmit() {
     body: JSON.stringify(payload),
   })
     .then((res) => {
-      if (!res.ok) {
-        throw new Error('Erro ao cadastrar usuário')
+      if (res.status === 400) {
+        toast.add({
+          severity: 'error',
+          message: 'Verifique se os campos estão preenchidos corretamente',
+        })
       }
+
       return res.json()
     })
     .then((data) => {
-      console.log('Usuário cadastrado com sucesso:', data)
+      if (!data.success) {
+        data.errors.forEach((error) => postSubmitValidation(error))
+        return
+      }
+
+      toast.add({
+        severity: 'success',
+        message: 'Cadastro realizado com sucesso',
+      })
+
+      resetFormFields()
+      currentStep.value = 0
     })
     .catch((error) => {
       console.error('Erro:', error)

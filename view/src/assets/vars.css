@@ -6,9 +6,17 @@
   --color-primary-disabled: #ffb84d;
   --color-primary-darker: #e66e00;
   --color-error: #dc3545;
+  --color-error-darker: #c82333;
+  --color-error-lighter: #f8d7da;
   --color-success: #28a745;
+  --color-success-darker: #218838;
+  --color-success-lighter: #d4edda;
   --color-help: #17a2b8;
+  --color-help-darker: #138496;
+  --color-help-lighter: #d1ecf1;
   --color-warning: #ffc107;
+  --color-warning-darker: #e0a800;
+  --color-warning-lighter: #fff3cd;
 
   --background-color: #ececec;
   --surface-color: #ffffff;
