@@ -2,13 +2,19 @@
 import AppLogo from '@/components/Icons/AppLogo.vue'
 import DarkTheme from '@/components/Icons/DarkTheme.vue'
 import LightTheme from '@/components/Icons/LightTheme.vue'
-
 import { ref } from 'vue'
 
 const theme = ref(false)
 
+const storedTheme = localStorage.getItem('theme')
+theme.value = storedTheme && storedTheme === 'dark'
+theme.value
+  ? document.querySelector('html').classList.add('dark-theme')
+  : document.querySelector('html').classList.remove('dark-theme')
+
 function toggleTheme() {
   theme.value = document.querySelector('html').classList.toggle('dark-theme')
+  localStorage.setItem('theme', theme.value ? 'dark' : 'light')
 }
 </script>
 
