@@ -1,8 +1,8 @@
 <script setup>
-import { AppButton, AppCard } from '@/components'
-import { computed, reactive, ref } from 'vue'
-import { AppCustomerType, AppInputText } from '@/components/FormFields'
+import { TheButton, TheCard, TheCustomerType, TheInputText } from '@/components'
+import { computed, reactive, ref, toRaw } from 'vue'
 import { useFormValidator } from '@/composables/useFormValidator'
+import { useSha256 } from '@/composables/useSha256'
 
 const currentStep = ref(0)
 const passwordCheck = ref(null)
@@ -84,12 +84,32 @@ function previousStep() {
 }
 
 function handleBlur(fieldName) {
-  console.log(fieldName, errors[fieldName])
   validateField(fieldName)
 }
 
-function handleSubmit() {
-  console.log('submitting')
+async function handleSubmit() {
+  const payload = { ...toRaw(formFields) }
+  payload.password = await useSha256()(payload.password)
+
+  await fetch('/registration', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  })
+    .then((res) => {
+      if (!res.ok) {
+        throw new Error('Erro ao cadastrar usuário')
+      }
+      return res.json()
+    })
+    .then((data) => {
+      console.log('Usuário cadastrado com sucesso:', data)
+    })
+    .catch((error) => {
+      console.error('Erro:', error)
+    })
 }
 
 function checkPassword() {
@@ -108,8 +128,8 @@ function checkPassword() {
       <h1>{{ steps[currentStep] }}</h1>
     </header>
 
-    <AppCard>
-      <AppInputText
+    <TheCard>
+      <TheInputText
         v-if="isWelcomeStep || isCheckoutStep"
         v-model="formFields.email"
         :label="fieldLabels.email"
@@ -118,9 +138,9 @@ function checkPassword() {
         @blur="handleBlur('email')"
         @keydown.enter="nextStep"
       />
-      <AppCustomerType v-if="isWelcomeStep" v-model="formFields.customerType" />
+      <TheCustomerType v-if="isWelcomeStep" v-model="formFields.customerType" />
 
-      <AppInputText
+      <TheInputText
         v-if="isCustomerInfoStep || isCheckoutStep"
         v-model="formFields.name"
         :label="fieldLabels.name"
@@ -129,7 +149,7 @@ function checkPassword() {
         @blur="handleBlur('name')"
         @keydown.enter="nextStep"
       />
-      <AppInputText
+      <TheInputText
         v-if="isCustomerInfoStep || isCheckoutStep"
         v-model="formFields.document"
         :label="fieldLabels.document"
@@ -138,7 +158,7 @@ function checkPassword() {
         @blur="handleBlur('document')"
         @keydown.enter="nextStep"
       />
-      <AppInputText
+      <TheInputText
         v-if="isCustomerInfoStep || isCheckoutStep"
         v-model="formFields.registrationDate"
         :label="fieldLabels.registrationDate"
@@ -148,7 +168,7 @@ function checkPassword() {
         @blur="handleBlur('registrationDate')"
         @keydown.enter="nextStep"
       />
-      <AppInputText
+      <TheInputText
         v-if="isCustomerInfoStep || isCheckoutStep"
         v-model="formFields.phone"
         :label="fieldLabels.phone"
@@ -158,7 +178,7 @@ function checkPassword() {
         @keydown.enter="nextStep"
       />
 
-      <AppInputText
+      <TheInputText
         v-if="isCheckoutStep"
         v-model="passwordCheck"
         :label="fieldLabels.password"
@@ -171,7 +191,7 @@ function checkPassword() {
         @keydown.enter="handleSubmit"
       />
 
-      <AppInputText
+      <TheInputText
         v-if="isPasswordStep"
         v-model="formFields.password"
         :label="fieldLabels.password"
@@ -183,14 +203,14 @@ function checkPassword() {
       />
 
       <div class="register-form-step-actions">
-        <AppButton label="Voltar" outlined @click="previousStep" v-if="currentStep > 0" />
-        <AppButton
+        <TheButton v-if="currentStep > 0" label="Voltar" outlined @click="previousStep" />
+        <TheButton
           :label="isCheckoutStep ? 'Cadastrar' : 'Continuar'"
           @click="() => (isCheckoutStep ? handleSubmit() : nextStep())"
           :disabled="cantMoveOn"
         />
       </div>
-    </AppCard>
+    </TheCard>
   </div>
 </template>
 
